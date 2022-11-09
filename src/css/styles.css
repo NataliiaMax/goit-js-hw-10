@@ -19,14 +19,46 @@ body {
   margin-bottom: 16px;
 }
 
-.list__img .card__img {
-  width: 50px;
-  height: 25px;
+.country__list {
+  padding-left: 0px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
-.country__list, .country__info{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.list{
+    display: flex;
+      align-items: center;
+      width: 50%;
 }
+
+.list__img{
+  height: 20px;
+    margin-right: 10px;
+}
+
+.country__info{
+padding-left: 0px;
+  list-style-type: none;
+}
+
+.card__list{
+  display: flex;
+  list-style-type: none;
+  flex-direction: column;
+}
+
+.card__img {
+margin-right: 10px;
+  height: auto;
+  width: 30px;
+}
+
+.card__text{
+  font-weight: bold;
+}
+
+.card__item__title{
+  display: flex;
+}
+

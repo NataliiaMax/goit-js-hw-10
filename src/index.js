@@ -10,51 +10,63 @@ const refs = {
   container: document.querySelector('.country-info'),
 };
 
-console.log(refs.container);
-console.log(refs.list);
-
 refs.input.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
 function onInput(event) {
-  const infoCountry = event.target.value.trim();
+  let infoCountry = event.target.value.trim();
+  if (infoCountry === '') {
+    return (refs.list.innerHTML = ''), (refs.container.innerHTML = '');
+  }
+
   fetchCountries(infoCountry)
-    .then(showCountry)
+    .then(country => {
+      refs.list.innerHTML = '';
+      refs.container.innerHTML = '';
+      if (country.length === 1) {
+        refs.container.insertAdjacentHTML(
+          'beforeend',
+          showCountryInfo(country)
+        ) 
+      } else if (country.length >= 10) {
+        Notiflix.Notify.info(
+          'Too many matches found. Please enter a more specific name.'
+        );
+            } else {
+             refs.list.insertAdjacentHTML('beforeend', showCountry(country)),
+          refs.container.innerHTML = '';
+      }
+    })
     .catch(() =>
       Notiflix.Notify.failure('Oops, there is no country with that name')
     );
-  if (!infoCountry) {
-    refs.list.innerHTML = '';
-    refs.container.innerHTML = '';
-    return;
-  }
+
   console.log(fetchCountries(infoCountry));
 }
 
 function showCountry(country) {
-  if (2 >= country.length <= 10) {
-    const listCountry = country
-      .map(
-        item =>
-          `<li class = 'list'><img class="list__img"src="${item.flags.svg}" alt="${item.name.official}"><p class="card__title">${item.name.official}</p></li>`
-      )
-      .join('');
-    refs.container.innerHTML = '';
-    refs.list.innerHTML = listCountry;
-  }
-  if (country.length > 10) {
-    Notiflix.Notify.info(
-      'Too many matches found. Please enter a more specific name.'
-    );
-  }
+  const listCountry = country.map(item =>
+        `<li class='list'><img class="list__img"src="${item.flags.svg}" alt="${item.name.official}"><p class="card__title">${item.name.common}</p></li>`
+    )
+    .join('');
+  return listCountry;
+}
 
-    const markup = country
-      .map(
-        item =>
-          `<div class="card"><div><img class="card__img"src="${item.flags.svg}" alt="${item.name.official}"></div><div class="card__body"><h1 class="card__title">${item.name}</h1><ul class="card__list"><li class="card__item">Capital: ${item.capital}</li><li class="card__item">Population: ${item.population}</li><li class="card__item">Languages: ${item.languages}</li></ul></div></div>`
-      )
-      .join('');
-  return
-    refs.container.innerHTML = markup;
-    refs.list.innerHTML = '';
-
+function showCountryInfo(country) {
+  const markup = country
+    .map(
+      item => `<ul class="card__list"><li class="card__item__title"><img class="card__img"src="${
+        item.flags.svg
+      }" alt="${item.name.official}"><h1 class="card__title">${
+        item.name.common
+      }</h1></</li>
+    <li class="card__item"><span class = 'card__text'>Capital:</span> ${
+      item.capital
+    }</li><li class="card__item"><span class = 'card__text'>Population:</span> ${
+        item.population
+      }</li><li class="card__item"><span class = 'card__text'>Languages:</span> ${Object.values(
+        item.languages
+      ).join(', ')}</li></ul>`
+    )
+    .join('');
+  return markup;
 }
